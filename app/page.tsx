@@ -13,13 +13,63 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [slug, setSlug] = useState("");
   const [createEnabled, setCreateEnabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setCreateEnabled(isValidUrl(url) && isValidSlug(slug));
   }, [url, slug]);
 
-  const handleCreate = () => {
-    toast.error("Coming soon!");
+  const handleCreate = async () => {
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/yvsb/api/v1/short_urls", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url, slug }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to create short URL");
+      }
+
+      const shortUrl = `${window.location.origin}/${data.data.slug}`;
+      toast.success(
+        <>
+          Short URL created:
+          <br />
+          <a
+            className="text-blue-500 hover:underline"
+            href={shortUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {shortUrl}
+          </a>
+        </>,
+        {
+          action: {
+            label: "Copy",
+            onClick: () => {
+              navigator.clipboard.writeText(shortUrl);
+            },
+          },
+          duration: 60000,
+        }
+      );
+      setUrl("");
+      setSlug("");
+    } catch (error: any) {
+      toast.error(
+        error.message || "An error occurred while creating the short URL"
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -57,10 +107,10 @@ export default function Home() {
             <div className="flex justify-end">
               <Button
                 className="cursor-pointer"
-                disabled={!createEnabled}
+                disabled={!createEnabled || isLoading}
                 onClick={handleCreate}
               >
-                Create
+                {isLoading ? "Creating..." : "Create"}
               </Button>
             </div>
           </div>
