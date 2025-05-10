@@ -14,5 +14,5 @@ export function isValidUrl(url: string) {
 }
 
 export function isValidSlug(slug: string) {
-  return /^[a-zA-Z0-9_-]*$/.test(slug);
+  return slug !== "yvsb" && /^[a-zA-Z0-9_-]*$/.test(slug);
 }
