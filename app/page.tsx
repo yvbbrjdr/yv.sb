@@ -1,5 +1,6 @@
 "use client";
 
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -104,7 +105,14 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="flex justify-end">
+            <div className="flex items-center justify-between">
+              <a
+                href="https://github.com/yvbbrjdr/yv.sb"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <SiGithub className="text-gray-700" />
+              </a>
               <Button
                 className="cursor-pointer"
                 disabled={!createEnabled || isLoading}
